@@ -1,43 +1,17 @@
-# Python
-__pycache__/
-*.py[cod]
-*$py.class
+# Ignore EVERYTHING by default
+*
 
-# Virtual Environment
-venv/
-venv_atp/
-env/
-ENV/
-.venv
+# Allow directories
+!*/
 
-# Data files
-data/
-*.parquet
-*.csv
-
-# Logs
-logs/
-*.log
-
-# Config / secrets
-.env
-.env.local
-config.yaml
-
-# Models
-*.pkl
-*.joblib
-*.h5
-!models/
-!models/**/*.pkl
-!models/**/*.joblib
-!models/**/*.h5
-
-# IDE / OS
-.vscode/
-.idea/
-.DS_Store
-Thumbs.db
-
+# Allow core scripts
 !run_pipeline.py
 !orchestrate.py
+
+# Allow models directory and model files
+!models/
+!models/**
+!models/**/*.pkl
+
+# Allow gitignore itself
+!.gitignore
