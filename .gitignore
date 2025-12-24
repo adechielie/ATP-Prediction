@@ -1,0 +1,43 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual Environment
+venv/
+venv_atp/
+env/
+ENV/
+.venv
+
+# Data files
+data/
+*.parquet
+*.csv
+
+# Logs
+logs/
+*.log
+
+# Config / secrets
+.env
+.env.local
+config.yaml
+
+# Models
+*.pkl
+*.joblib
+*.h5
+!models/
+!models/**/*.pkl
+!models/**/*.joblib
+!models/**/*.h5
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+!run_pipeline.py
+!orchestrate.py
