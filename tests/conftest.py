@@ -11,7 +11,7 @@ sys.path.insert(0, str(PROJECT_ROOT))
 @pytest.fixture
 def minimal_atp_df():
     return pd.DataFrame({
-        "tourney_name": ["Australian Open", "Wimbledon"],
+        "tourney_name": ["G", "A"],
         "tourney_date": [20240101, 20240102],
         "tourney_level": ["G", "A"],
         "winner_id": [1, 2],
