@@ -1,8 +1,9 @@
 # config.example.yaml
-allowed_tournaments:
-  - G
-  - A
-  - M
+tournaments:
+  allowed:
+    - G
+    - A
+    - M
 
 location_mapping: {}
 
