@@ -15,7 +15,8 @@ from loguru import logger
 from pathlib import Path
 from datetime import datetime
 
-from ..utils.config import config
+from ..utils.config import get_config
+config = get_config()
 
 
 def train_model():

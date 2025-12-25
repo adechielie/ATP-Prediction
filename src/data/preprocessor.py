@@ -7,7 +7,8 @@ import numpy as np
 import pandas as pd
 from loguru import logger
 
-from ..utils.config import config
+from ..utils.config import get_config
+config = get_config()
 
 
 class ATPDataPreprocessor:
