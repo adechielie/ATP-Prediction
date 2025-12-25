@@ -24,6 +24,9 @@ jobs:
           pip install -r requirements.txt
           pip install pytest
 
+      - name: Prepare test config
+        run: cp config.example.yaml config.yaml
+
       - name: Run tests
         run: pytest -v
 

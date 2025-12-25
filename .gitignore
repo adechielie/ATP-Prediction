@@ -33,3 +33,6 @@
 
 # --- Allow Requirements.txt ---
 !requirements.txt
+
+# --- Allow Requirements.txt ---
+!config.yaml
