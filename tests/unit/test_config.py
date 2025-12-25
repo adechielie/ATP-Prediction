@@ -1,5 +1,5 @@
-from src.utils.config import config
-
+from src.utils.config import get_config
+config = get_config()
 
 def test_config_loaded():
     assert config is not None
