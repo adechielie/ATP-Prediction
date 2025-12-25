@@ -16,6 +16,7 @@
 # Allow core scripts
 !run_pipeline.py
 !orchestrate.py
+!app_streamlit.py
 
 # Allow models directory and model files
 !models/
