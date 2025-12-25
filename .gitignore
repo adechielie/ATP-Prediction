@@ -35,4 +35,4 @@
 !requirements.txt
 
 # --- Allow Requirements.txt ---
-!config.yaml
+!config.example.yaml

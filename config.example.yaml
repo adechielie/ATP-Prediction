@@ -1,0 +1,11 @@
+# config.example.yaml
+allowed_tournaments:
+  - G
+  - A
+  - M
+
+location_mapping: {}
+
+columns_to_drop: []
+
+min_matches_per_player: 1
