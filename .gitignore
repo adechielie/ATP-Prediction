@@ -4,6 +4,15 @@
 # Allow directories
 !*/
 
+
+# --- Core application code ---
+!src/
+!src/**/*.py
+
+# --- Tests ---
+!tests/
+!tests/**/*.py
+
 # Allow core scripts
 !run_pipeline.py
 !orchestrate.py
@@ -21,3 +30,6 @@
 !.github/**
 !.github/workflows/
 !.github/workflows/*.yml
+
+# --- Allow Requirements.txt ---
+!requirements.txt
