@@ -113,5 +113,14 @@ class Config:
         return f"Config(keys={list(self._config.keys())})"
 
 
-# Instance globale
-config = Config()
+_config = None
+
+def get_config() -> Config:
+    """
+    Retourne l'instance singleton de configuration.
+    La configuration est chargée uniquement au premier appel.
+    """
+    global _config
+    if _config is None:
+        _config = Config()
+    return _config
