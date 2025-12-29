@@ -51,8 +51,6 @@ def run_script(script: str, description: str, timeout: int = 3600) -> bool:
             cmd,
             cwd=PROJECT_ROOT,
             check=True,
-            capture_output=True,
-            text=True,
             timeout=timeout
         )
         

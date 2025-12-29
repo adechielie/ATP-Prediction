@@ -64,6 +64,10 @@ class ATPDataCollector:
         logger.info(f"Collecting ATP data for years {min(years)}-{max(years)}")
         
         for year in tqdm(years, desc="Downloading years"):
+            # ⛔ Jeff Sackmann n'a pas encore 2025
+            if year == 2025:
+                continue
+
             df = self.fetch_year_data(year)
             
             if df is not None:
@@ -75,6 +79,13 @@ class ATPDataCollector:
                 
                 dfs.append(df)
         
+        # 🔵 Ajouter 2025 depuis TML si présent
+        tml_2025 = self.raw_path / "atp_matches_2025.csv"
+
+        if tml_2025.exists():
+            logger.info("Adding ATP 2025 data from TML Database")
+            dfs.append(pd.read_csv(tml_2025))
+                
         # Concaténer tous les DataFrames
         if not dfs:
             raise ValueError("No data collected!")

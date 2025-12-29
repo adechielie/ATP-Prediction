@@ -76,8 +76,8 @@ class Config:
     @property
     def years_range(self) -> List[int]:
         """Plage d'années pour les données ATP."""
-        years = self.get('data.sources.atp_github.years_range', [2000, 2025])
-        return list(range(years[0], years[1]+1))
+        years = self.get('data.sources.atp_github.years_range', [2000, 2026])
+        return list(range(years[0], years[1]))
     
     @property
     def allowed_tournaments(self) -> List[str]:
