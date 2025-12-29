@@ -26,7 +26,7 @@ def setup_logging(log_level: str = "INFO", log_file: str = "atp_prediction.log")
         colorize=True,
     )
     
-    # Ajouter un handler fichier
+""" # Ajouter un handler fichier
     log_path = Path(__file__).parent.parent.parent / "logs" / log_file
     log_path.parent.mkdir(parents=True, exist_ok=True)
     
@@ -43,4 +43,4 @@ def setup_logging(log_level: str = "INFO", log_file: str = "atp_prediction.log")
 
 
 # Configuration par défaut
-setup_logging()
+setup_logging()"""
