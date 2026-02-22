@@ -1,5 +1,5 @@
 """
-Collecteur de données ATP depuis GitHub (Jeff Sackmann).
+Collecteur de données ATP depuis GitHub (Jeff Sackmann) + TML pour 2025.
 """
 from typing import List, Optional
 from pathlib import Path
@@ -14,7 +14,7 @@ config = get_config()
 
 
 class ATPDataCollector:
-    """Collecte les données de matchs ATP depuis le dépôt GitHub."""
+    """Collecte les données de matchs ATP depuis le dépôt GitHub + TML."""
     
     def __init__(self):
         self.base_url = config.atp_base_url
@@ -24,7 +24,7 @@ class ATPDataCollector:
     
     def fetch_year_data(self, year: int) -> Optional[pd.DataFrame]:
         """
-        Récupère les données d'une année spécifique.
+        Récupère les données d'une année spécifique depuis Jeff Sackmann.
         
         Args:
             year: Année à récupérer
@@ -66,8 +66,9 @@ class ATPDataCollector:
         for year in tqdm(years, desc="Downloading years"):
             # ⛔ Jeff Sackmann n'a pas encore 2025
             if year == 2025:
+                logger.info(f"Skipping {year} (will use TML data if available)")
                 continue
-
+            
             df = self.fetch_year_data(year)
             
             if df is not None:
@@ -79,13 +80,17 @@ class ATPDataCollector:
                 
                 dfs.append(df)
         
-        # 🔵 Ajouter 2025 depuis TML si présent
-        tml_2025 = self.raw_path / "atp_matches_2025.csv"
-
-        if tml_2025.exists():
-            logger.info("Adding ATP 2025 data from TML Database")
-            dfs.append(pd.read_csv(tml_2025))
-                
+        # 🔵 Ajouter 2025 depuis TML si présent (déjà harmonisé)
+        tml_2025_path = self.raw_path / "atp_matches_2025.csv"
+        
+        if tml_2025_path.exists():
+            logger.info("📥 Adding ATP 2025 data from TML Database (harmonized)")
+            df_2025 = pd.read_csv(tml_2025_path)
+            logger.info(f"  ✅ Loaded {len(df_2025)} matches from 2025")
+            dfs.append(df_2025)
+        elif 2025 in years:
+            logger.warning("⚠️  ATP 2025 data not found in raw/. Run TMLDataCollector first.")
+        
         # Concaténer tous les DataFrames
         if not dfs:
             raise ValueError("No data collected!")
@@ -93,7 +98,7 @@ class ATPDataCollector:
         combined_df = pd.concat(dfs, ignore_index=True)
         
         logger.success(
-            f"✅ Collected {len(combined_df):,} matches from {len(dfs)} years"
+            f"✅ Collected {len(combined_df):,} matches from {len(dfs)} year(s)"
         )
         
         return combined_df
@@ -117,6 +122,7 @@ class ATPDataCollector:
             if file_path.exists():
                 df = pd.read_csv(file_path)
                 dfs.append(df)
+                logger.debug(f"Loaded {year}: {len(df)} matches")
             else:
                 logger.warning(f"File not found: {file_path}")
         
@@ -124,7 +130,7 @@ class ATPDataCollector:
             raise FileNotFoundError("No local data files found!")
         
         combined_df = pd.concat(dfs, ignore_index=True)
-        logger.info(f"Loaded {len(combined_df):,} matches from disk")
+        logger.info(f"Loaded {len(combined_df):,} matches from disk ({len(dfs)} years)")
         
         return combined_df
     

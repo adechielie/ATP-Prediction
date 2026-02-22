@@ -1,14 +1,18 @@
 """
 Script principal pour le pipeline complet ATP Prediction.
+Collecte les données 2000-2024 (Jeff Sackmann) + 2025 (TML Database harmonisé).
 """
 import argparse
 from pathlib import Path
 
 from src.data.atp_collector import ATPDataCollector
+from src.data.tml_collector import TMLDataCollector
 from src.data.climate_collector import ClimateDataCollector
 from src.data.preprocessor import ATPDataPreprocessor
 from src.features.feature_engineer import ATPFeatureEngineer
 from src.utils.logger import logger, setup_logging
+
+setup_logging()
 
 
 def main(
@@ -35,17 +39,37 @@ def main(
     # ==========================================
     logger.info("\n📥 ÉTAPE 1/4 : Collecte des données ATP...")
     
+    # 🆕 SOUS-ÉTAPE 1A : Collecter 2025 depuis TML (harmonisation automatique)
+    logger.info("\n📥 1A : Collecte ATP 2025 depuis TML Database...")
+    try:
+        tml_collector = TMLDataCollector()
+        tml_2025 = tml_collector.get_or_fetch_data(force_download=force_download)
+        logger.success(f"✅ ATP 2025 (TML) : {len(tml_2025):,} matchs (harmonisé)")
+    except Exception as e:
+        logger.warning(f"⚠️  Impossible de charger ATP 2025 depuis TML: {e}")
+        logger.info("Continuation sans données 2025")
+    
+    # 🆕 SOUS-ÉTAPE 1B : Collecter 2000-2024 depuis Jeff Sackmann + charger 2025 harmonisé
+    logger.info("\n📥 1B : Collecte ATP 2000-2024 depuis Jeff Sackmann...")
     atp_collector = ATPDataCollector()
     atp_data = atp_collector.get_or_fetch_data(force_download=force_download)
     
-    logger.info(f"✅ Données ATP chargées : {len(atp_data):,} matchs")
+    logger.success(f"✅ Données ATP totales : {len(atp_data):,} matchs")
+    
+    # Afficher la répartition par année
+    if 'tourney_date' in atp_data.columns:
+        atp_data['tourney_date'] = pd.to_datetime(atp_data['tourney_date'])
+        years_count = atp_data['tourney_date'].dt.year.value_counts().sort_index()
+        logger.info(f"📊 Répartition : {years_count.min()} à {years_count.max()}")
+        if 2025 in years_count.index:
+            logger.info(f"   → 2025 : {years_count[2025]:,} matchs ✅")
     
     # Données climatiques
-    logger.info("\n🌤️  Collecte des données climatiques...")
+    logger.info("\n🌤️  1C : Collecte des données climatiques...")
     climate_collector = ClimateDataCollector()
     climate_data = climate_collector.get_or_fetch_data(force_download=force_download)
     
-    logger.info(f"✅ Données climatiques chargées : {len(climate_data):,} enregistrements")
+    logger.success(f"✅ Données climatiques : {len(climate_data):,} enregistrements")
     
     # Sauvegarder bronze
     if save_bronze:
@@ -74,7 +98,7 @@ def main(
     )
     clean_data = clean_data.drop(columns=['city', 'date'], errors='ignore')
     
-    logger.info(f"✅ Données nettoyées : {len(clean_data):,} matchs")
+    logger.success(f"✅ Données nettoyées : {len(clean_data):,} matchs")
     
     # Sauvegarder silver
     if save_silver:
@@ -92,7 +116,7 @@ def main(
     engineer = ATPFeatureEngineer()
     features_data = engineer.engineer_features(clean_data)
     
-    logger.info(f"✅ Features créées : {len(features_data.columns)} colonnes")
+    logger.success(f"✅ Features créées : {len(features_data.columns)} colonnes")
     
     # Sauvegarder gold
     if save_gold:
@@ -111,14 +135,23 @@ def main(
     logger.info(f"Bronze : {len(atp_data):,} matchs bruts")
     logger.info(f"Silver : {len(clean_data):,} matchs nettoyés")
     logger.info(f"Gold   : {len(features_data):,} matchs avec {len(features_data.columns)} features")
+    
+    # Afficher les années présentes
+    if 'tourney_date' in features_data.columns:
+        years = features_data['tourney_date'].dt.year.unique()
+        logger.info(f"Années : {min(years)} à {max(years)} ({len(years)} années)")
+    
     logger.info("=" * 80)
-    logger.info("✅ PIPELINE TERMINÉ AVEC SUCCÈS")
+    logger.success("✅ PIPELINE TERMINÉ AVEC SUCCÈS")
     logger.info("=" * 80)
     
     return features_data
 
 
 if __name__ == "__main__":
+    # Importer pandas pour l'affichage des années
+    import pandas as pd
+    
     # Configurer le logging
     setup_logging(log_level="INFO")
     
